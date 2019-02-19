@@ -59,13 +59,24 @@ app.delete('/users', (req, res) => {
 
 app.delete('/users/:id', (req, res) => {
   let newUsers = users.filter(user => {
-    console.log(user.id, req.params.id)
     return user.id.toString() !== req.params.id.toString()
   })
   console.log(newUsers)
   users = newUsers
   res.send({
     message: `user with id ${req.params.id} was deleted`,
+    data: users,
+  })
+})
+
+app.put('/users/:id', (req, res) => {
+  let user = users.find(user => {
+    return user.id.toString() === req.params.id.toString()
+  })
+
+  user.name = 'blablacar'
+  res.send({
+    message: `user with id ${req.params.id} was changed to blablacar`,
     data: users,
   })
 })
