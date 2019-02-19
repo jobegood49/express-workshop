@@ -49,6 +49,27 @@ app.post('/users', (req, res) => {
   })
 })
 
+app.delete('/users', (req, res) => {
+  users = []
+  res.send({
+    message: 'All users were deleted',
+    data: users,
+  })
+})
+
+app.delete('/users/:id', (req, res) => {
+  let newUsers = users.filter(user => {
+    console.log(user.id, req.params.id)
+    return user.id.toString() !== req.params.id.toString()
+  })
+  console.log(newUsers)
+  users = newUsers
+  res.send({
+    message: `user with id ${req.params.id} was deleted`,
+    data: users,
+  })
+})
+
 app.listen(port, () => {
   console.log(`listening on port: ${port}`)
 })
