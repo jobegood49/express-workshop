@@ -1,9 +1,11 @@
 const express = require('express')
 const app = express()
+var bodyParser = require('body-parser')
 
 const port = 8000
 
-const users = [
+let nextId = 4
+let users = [
   {
     id: 1,
     name: 'Toto',
@@ -18,12 +20,31 @@ const users = [
   },
 ]
 
+app.use(bodyParser.json())
+
 app.get('/', (req, res) => {
   res.send({ message: 'Hello World' })
 })
 
 app.get('/users', (req, res) => {
   res.send({
+    data: users,
+  })
+})
+
+app.post('/users', (req, res) => {
+  let newUser = {
+    id: nextId,
+    name: req.body.name,
+  }
+
+  let newUsers = users.concat(newUser)
+  users = newUsers
+  nextId += 1
+
+  res.send({
+    message: 'Created new User',
+    newUser: newUser,
     data: users,
   })
 })
