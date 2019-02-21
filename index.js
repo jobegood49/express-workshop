@@ -1,85 +1,19 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
-var bodyParser = require('body-parser')
-
 const port = 8000
-
-let nextId = 4
-let users = [
-  {
-    id: 1,
-    name: 'Toto',
-  },
-  {
-    id: 2,
-    name: 'Toto2',
-  },
-  {
-    id: 3,
-    name: 'Toto3',
-  },
-]
 
 app.use(bodyParser.json())
 
-app.get('/', (req, res) => {
-  res.send({ message: 'Hello World' })
-})
+const root = require('./middlewares/index')
+const users = require('./middlewares/users')
 
-app.get('/users', (req, res) => {
-  res.send({
-    data: users,
-  })
-})
-
-app.post('/users', (req, res) => {
-  let newUser = {
-    id: nextId,
-    name: req.body.name,
-  }
-
-  let newUsers = users.concat(newUser)
-  users = newUsers
-  nextId += 1
-
-  res.send({
-    message: 'Created new User',
-    newUser: newUser,
-    data: users,
-  })
-})
-
-app.delete('/users', (req, res) => {
-  users = []
-  res.send({
-    message: 'All users were deleted',
-    data: users,
-  })
-})
-
-app.delete('/users/:id', (req, res) => {
-  let newUsers = users.filter(user => {
-    return user.id.toString() !== req.params.id.toString()
-  })
-  console.log(newUsers)
-  users = newUsers
-  res.send({
-    message: `user with id ${req.params.id} was deleted`,
-    data: users,
-  })
-})
-
-app.put('/users/:id', (req, res) => {
-  let user = users.find(user => {
-    return user.id.toString() === req.params.id.toString()
-  })
-
-  user.name = 'blablacar'
-  res.send({
-    message: `user with id ${req.params.id} was changed to blablacar`,
-    data: users,
-  })
-})
+app.get('/', root.hello)
+app.get('/users', users.getUsers)
+app.post('/users', users.createNewUser)
+app.delete('/users', users.deleteAllUsers)
+app.delete('/users/:id', users.deleteUserById)
+app.put('/users/:id', users.updateUserById)
 
 app.listen(port, () => {
   console.log(`listening on port: ${port}`)
